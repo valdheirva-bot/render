@@ -18,6 +18,7 @@ console.log("Token carregado:", process.env.HF_TOKEN ? "SIM" : "NÃO");
     }
 
     try {
+        console.log("URL de chamada:", "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large");
         const response = await fetch("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", {
     method: "POST",
     headers: { 
