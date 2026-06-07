@@ -1,3 +1,4 @@
+const axios = require('axios');
 const express = require('express');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const cors = require('cors');
@@ -17,30 +18,29 @@ console.log("Token carregado:", process.env.HF_TOKEN ? "SIM" : "NÃO");
         return res.status(400).json({ error: "Nenhuma imagem fornecida" });
     }
 
-    try {
-        console.log("URL de chamada:", "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large");
-        const response = await fetch("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", {
-    method: "POST",
-    headers: { 
-        "Authorization": `Bearer ${process.env.HF_TOKEN}`,
-        "Content-Type": "application/json" 
-    },
-    body: JSON.stringify({ inputs: req.body.inputs })
-});
-
-        const data = await response.json();
-        
-        if (!response.ok) {
-            console.error("Erro do Hugging Face:", data);
-            return res.status(response.status).json(data);
+try {
+    console.log("Tentando conexão com Hugging Face via Axios...");
+    
+    const response = await axios.post(
+        "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large",
+        { inputs: req.body.inputs },
+        {
+            headers: { 
+                "Authorization": `Bearer ${process.env.HF_TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            timeout: 10000 // Timeout de 10 segundos
         }
+    );
 
-        res.json(data);
-    } catch (err) {
-        console.error("Erro interno:", err);
-        res.status(500).json({ error: err.message });
+    res.json(response.data);
+} catch (err) {
+    console.error("Erro detalhado:", err.message);
+    if (err.response) {
+        console.error("Dados do erro:", err.response.data);
     }
-});
+    res.status(500).json({ error: "Falha na conexão com IA: " + err.message });
+}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
