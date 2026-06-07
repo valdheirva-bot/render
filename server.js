@@ -5,8 +5,11 @@ const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-
 app.post('/analisar', async (req, res) => {
+console.log("Token carregado:", process.env.HF_TOKEN ? "SIM" : "NÃO");
+    if (!process.env.HF_TOKEN) {
+        return res.status(500).json({ error: "Token não configurado no servidor" });
+    }
     console.log("Recebendo requisição de análise..."); // Isso aparecerá no Log do Render
 
     if (!req.body.inputs) {
