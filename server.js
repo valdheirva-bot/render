@@ -24,7 +24,7 @@ app.post('/analisar', async (req, res) => {
         const base64Data = req.body.inputs.includes(',') ? req.body.inputs.split(',')[1] : req.body.inputs;
 
         const response = await axios.post(
-            "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large",
+            "https://34.201.21.144/",
             { inputs: base64Data },
             {
                 headers: { 
