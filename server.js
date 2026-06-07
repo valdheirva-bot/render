@@ -17,17 +17,21 @@ app.post('/analisar', async (req, res) => {
         return res.status(400).json({ error: "Nenhuma imagem fornecida" });
     }
 
-    try {
+   try {
         console.log("Conectando via Axios...");
+        
+        // Limpa a string base64 caso venha com o prefixo "data:image/..."
+        const base64Data = req.body.inputs.includes(',') ? req.body.inputs.split(',')[1] : req.body.inputs;
+
         const response = await axios.post(
             "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large",
-            { inputs: req.body.inputs },
+            { inputs: base64Data },
             {
                 headers: { 
                     "Authorization": `Bearer ${process.env.HF_TOKEN}`,
                     "Content-Type": "application/json"
                 },
-                timeout: 10000 
+                timeout: 15000 // Aumentado para 15 segundos
             }
         );
         res.json(response.data);
