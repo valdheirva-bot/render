@@ -19,13 +19,13 @@ console.log("Token carregado:", process.env.HF_TOKEN ? "SIM" : "NÃO");
 
     try {
         const response = await fetch("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", {
-            method: "POST",
-            headers: { 
-                "Authorization": `Bearer ${process.env.HF_TOKEN}`, 
-                "Content-Type": "application/json" 
-            },
-            body: JSON.stringify({ inputs: req.body.inputs })
-        });
+    method: "POST",
+    headers: { 
+        "Authorization": `Bearer ${process.env.HF_TOKEN}`,
+        "Content-Type": "application/json" 
+    },
+    body: JSON.stringify({ inputs: req.body.inputs })
+});
 
         const data = await response.json();
         
