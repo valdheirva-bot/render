@@ -11,7 +11,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post('/analisar', async (req, res) => {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const base64Image = req.body.inputs;
 
         // Formata a requisição para o Gemini
