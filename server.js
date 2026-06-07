@@ -11,19 +11,32 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post('/analisar', async (req, res) => {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+        // 1. Usar o modelo gemini-1.5-flash, que é o mais compatível hoje
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        
         const base64Image = req.body.inputs;
 
-        // Formata a requisição para o Gemini
-       const result = await model.generateContent([
-    "Identifique o nome do produto nesta foto. Retorne apenas o nome do produto.",
-    {
-        inlineData: {
-            data: base64Image,
-            mimeType: "image/jpeg"
-        }
+        // 2. Montar o payload no formato esperado pelo SDK atual
+        const result = await model.generateContent([
+            { text: "Identifique o nome do produto nesta foto. Retorne apenas o nome do produto." },
+            {
+                inlineData: {
+                    mimeType: "image/jpeg",
+                    data: base64Image
+                }
+            }
+        ]);
+        
+        const response = await result.response;
+        const text = response.text();
+        
+        console.log("IA identificou:", text);
+        res.json({ descricao: text.trim() });
+    } catch (err) {
+        console.error("Erro na IA:", err);
+        res.status(500).json({ error: err.message });
     }
-]);
+});
         
         const respostaTexto = result.response.text().trim();
         console.log("IA identificou:", respostaTexto);
